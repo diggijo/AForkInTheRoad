@@ -1,0 +1,57 @@
+{
+    "version": 1,
+    "name": "InputActions",
+    "maps": [
+        {
+            "name": "Game",
+            "id": "3602f641-bb40-49f5-98b0-a560cf64bbea",
+            "actions": [
+                {
+                    "name": "DrawRoad",
+                    "type": "Button",
+                    "id": "b6666892-e8a9-4df5-8c8b-5b1423553be7",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "MousePosition",
+                    "type": "Value",
+                    "id": "6d3cd6cf-f6c6-4fb1-b7b3-c44d08ee4cf5",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true,
+                    "priority": 0
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "104457de-e395-4487-aea9-35f201ecfe26",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DrawRoad",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9e2ff701-a351-47c2-be48-b1141ff12d9b",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MousePosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
