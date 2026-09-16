@@ -17,7 +17,7 @@ public class RoadBuilder : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI distanceText;
     [SerializeField] private LineRenderer roadPrefab;
-    private float distance = 0f;
+    private float totalDistance = 0f;
 
     private void Awake()
     {
@@ -32,20 +32,25 @@ public class RoadBuilder : MonoBehaviour
             {
                 StartRoad();
             }
+            else if (isForking)
+            {
+                EndFork();
+                EndRoad();
+            }
             else
             {
                 EndRoad();
             }
         }
 
-        if (isDrawingRoad)
-        {
-            UpdateRoad();
-        }
-
         if (isForking)
         {
             UpdateFork();
+        }
+
+        if (isDrawingRoad)
+        {
+            UpdateRoad();
         }
     }
 
@@ -77,7 +82,7 @@ public class RoadBuilder : MonoBehaviour
         SetLinePosition(currentRoad, 0, startMousePos);
         SetLinePosition(currentRoad, 1, startMousePos);
 
-        DisplayDistance(0f);
+        DisplayDistance(totalDistance);
     }
 
     private void UpdateRoad()
@@ -93,8 +98,16 @@ public class RoadBuilder : MonoBehaviour
 
         SetLinePosition(currentRoad, 1, mousePos);
 
-        DisplayDistance(CalculateDistance(startMousePos, mousePos)
-        );
+        float currentRoadDistance = CalculateDistance(startMousePos, mousePos);
+
+        float currentForkDistance = 0f;
+
+        if (isForking)
+        {
+            currentForkDistance = CalculateDistance(startMousePos, mirroredPosition);
+        }
+
+        DisplayDistance(totalDistance + currentRoadDistance + currentForkDistance);
     }
 
     private void EndRoad()
@@ -103,29 +116,20 @@ public class RoadBuilder : MonoBehaviour
 
         if (hit == null)
         {
-            endMousePos = GetMouseWorldPosition();
-
-            SetLinePosition(currentRoad, 0, startMousePos);
-            SetLinePosition(currentRoad, 1, endMousePos);
-
-            CreateEdgeCollider(currentRoad, startMousePos, endMousePos);
-
-            DisplayDistance(CalculateDistance(startMousePos, endMousePos));
-
-            CreateFork();
-
-            return;
-        }
-
-        RoadNode node = hit.GetComponent<RoadNode>();
-
-        if (node != null)
-        {
-            endMousePos = node.transform.position;
+            endMousePos = SnapToGrid(GetMouseWorldPosition());
         }
         else
         {
-            endMousePos = GetMouseWorldPosition();
+            RoadNode node = hit.GetComponent<RoadNode>();
+
+            if (node != null)
+            {
+                endMousePos = node.transform.position;
+            }
+            else
+            {
+                endMousePos = SnapToGrid(GetMouseWorldPosition());
+            }
         }
 
         SetLinePosition(currentRoad, 0, startMousePos);
@@ -133,22 +137,27 @@ public class RoadBuilder : MonoBehaviour
 
         CreateEdgeCollider(currentRoad, startMousePos, endMousePos);
 
-        if(isForking)
-        {
-            CreateEdgeCollider(currentFork, startMousePos, mirroredPosition);
-        }
+        totalDistance += CalculateDistance(startMousePos, endMousePos);
 
-        DisplayDistance(CalculateDistance(startMousePos, endMousePos));
+        DisplayDistance(totalDistance);
 
         isDrawingRoad = false;
-        isForking = false;
         currentRoad = null;
-        currentFork = null;
+
+        if (!isForking)
+        {
+            if (hit != null)
+            {
+                return;
+            }
+
+            CreateFork();
+        }
     }
 
     private float CalculateDistance(Vector3 endPos, Vector3 startPos)
     {
-        return distance = (endPos - startPos).magnitude;
+        return (endPos - startPos).magnitude;
     }
 
     private void DisplayDistance(float distance)
@@ -251,5 +260,28 @@ public class RoadBuilder : MonoBehaviour
 
         SetLinePosition(currentFork, 0, startMousePos);
         SetLinePosition(currentFork, 1, mirroredPosition);
+    }
+
+    private Vector2 SnapToGrid(Vector2 position)
+    {
+        return new Vector2(Mathf.Round(position.x), Mathf.Round(position.y));
+    }
+
+    private void EndFork()
+    {
+        Debug.Log("Mirrored Position: " + mirroredPosition);
+        mirroredPosition = SnapToGrid(mirroredPosition);
+        Debug.Log("Mirrored Position after Snap: " + mirroredPosition);
+
+        SetLinePosition(currentFork, 0, startMousePos);
+        SetLinePosition(currentFork, 1, mirroredPosition);
+        CreateEdgeCollider(currentFork, startMousePos, mirroredPosition);
+
+        totalDistance += CalculateDistance(startMousePos, mirroredPosition);
+
+        DisplayDistance(totalDistance);
+
+        isForking = false;
+        currentFork = null;
     }
 }
