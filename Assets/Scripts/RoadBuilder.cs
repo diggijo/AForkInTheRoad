@@ -36,10 +36,12 @@ public class RoadBuilder : MonoBehaviour
             {
                 EndFork();
                 EndRoad();
+                GameManager.Instance.CheckConnections();
             }
             else
             {
                 EndRoad();
+                GameManager.Instance.CheckConnections();
             }
         }
 
@@ -269,9 +271,25 @@ public class RoadBuilder : MonoBehaviour
 
     private void EndFork()
     {
-        Debug.Log("Mirrored Position: " + mirroredPosition);
-        mirroredPosition = SnapToGrid(mirroredPosition);
-        Debug.Log("Mirrored Position after Snap: " + mirroredPosition);
+        Collider2D hit = Physics2D.OverlapPoint(mirroredPosition);
+
+        if (hit != null)
+        {
+            RoadNode node = hit.GetComponent<RoadNode>();
+
+            if (node != null)
+            {
+                mirroredPosition = node.transform.position;
+            }
+            else
+            {
+                mirroredPosition = SnapToGrid(mirroredPosition);
+            }
+        }
+        else
+        {
+            mirroredPosition = SnapToGrid(mirroredPosition);
+        }
 
         SetLinePosition(currentFork, 0, startMousePos);
         SetLinePosition(currentFork, 1, mirroredPosition);

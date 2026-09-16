@@ -654,6 +654,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f59e03326f97a846868e20a0a9f43f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoadNode
+  isPlayer: 1
 --- !u!1 &1477697042
 GameObject:
   m_ObjectHideFlags: 0
@@ -769,7 +770,7 @@ GameObject:
   - component: {fileID: 1623522022}
   - component: {fileID: 1623522021}
   m_Layer: 0
-  m_Name: RoadNode
+  m_Name: Dest#1-RoadNode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -848,6 +849,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f59e03326f97a846868e20a0a9f43f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoadNode
+  isPlayer: 0
 --- !u!1 &1728532154
 GameObject:
   m_ObjectHideFlags: 0
